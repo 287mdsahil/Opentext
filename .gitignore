@@ -11,3 +11,6 @@
 
 # vim files
 .ycm_extra_conf.py
+
+# compiled files
+opentext
