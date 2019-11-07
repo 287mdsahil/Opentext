@@ -1,2 +1,2 @@
 # Opentext
-Qt based text editor
+Terminal based text editor
