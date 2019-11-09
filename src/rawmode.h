@@ -1,9 +1,6 @@
 #include <termios.h>
 #include <unistd.h>
-#ifdef ERRORHANDLING_H
-#define ERRORHANDLING_H
-#include "../util/errorhandling.h"
-#endif
+#include "../include/errorhandling"
 /*** data ***/
 
 struct termios original_termios;

@@ -1,0 +1,4 @@
+#ifndef ERRORHANDLING_H
+#define ERRORHANDLING_H
+#include "../util/errorhandling.h"
+#endif
