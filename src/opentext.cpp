@@ -9,6 +9,9 @@
 #include "rawmode.h"
 using namespace std;
 
+/** defines **/
+#define CTRL_KEY(k) ((k) & 0x1f)
+
 /** init **/
 int main()
 {
@@ -28,8 +31,8 @@ int main()
 		else
 			printf("character entered: %c (%d)\n\r",c,c);
 		
-		// Quit the program if 'q' is entered
-		if(c == 'q')
+		// Quit the program if C^q is entered
+		if(c == CTRL_KEY('q'))
 			break;
 	}	
 	return 0;
