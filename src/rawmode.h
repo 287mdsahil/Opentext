@@ -1,9 +1,8 @@
 #include <termios.h>
 #include <unistd.h>
 #include "../include/errorhandling"
+#include "../include/globalstate"
 /*** data ***/
-
-struct termios original_termios;
 
 
 /*** terminal ***/
@@ -12,7 +11,7 @@ struct termios original_termios;
 void exitRawMode()
 {
 	// Resetting the attributes to inital values
-	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios) == -1) 
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &ECONFIG.original_termios) == -1) 
 		die("tcsetattr");
 }
 
@@ -22,9 +21,9 @@ void enterRawMode()
 {
 	// Getting the terminal's initial attributes and storing them
 	// in a local variable for restoring the terminal attributes
-	if(tcgetattr(STDIN_FILENO, &original_termios) == -1) die("tcsetattr");
+	if(tcgetattr(STDIN_FILENO, &ECONFIG.original_termios) == -1) die("tcsetattr");
 
-	struct termios raw = original_termios;
+	struct termios raw = ECONFIG.original_termios;
 	
 	// ~ECHO to disable echo
 	// ~ICANON to disable cannonical mode

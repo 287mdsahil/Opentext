@@ -1,11 +1,9 @@
-/*** includes ***/
-
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include <termios.h>
 #include <ctype.h>
 #include "../include/errorhandling"
+#include "../include/globalstate"
 #include "rawmode.h"
 #include "keyboard.h"
 #include "screen.h"

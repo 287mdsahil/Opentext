@@ -1,0 +1,4 @@
+#ifndef GLOBALSTATE_H
+#define GLOBALSTATE_H
+#include "../util/globalstate.h"
+#endif

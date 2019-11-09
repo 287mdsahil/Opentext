@@ -1,0 +1,4 @@
+#ifndef GETWINDOWSIZE_H
+#define GETWINDOWSIZE_H
+#include "../util/getwindowsize.h"
+#endif
