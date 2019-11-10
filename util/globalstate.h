@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <string>
+#include <fcntl.h>
 
 #define TAB_SIZE 8
 
@@ -166,6 +167,48 @@ public:
 		fclose(fp);
 		
 	}
+
+
+	/** file I/0 ----------------------------------------------------------------------------- **/
+
+	char* editorRowsToString(int *buflen)
+	{
+		int totlen = 0;
+		int j;
+		for(j = 0;j<numrows;j++)
+			totlen += row[j].size + 1;
+		*buflen = totlen;
+
+		char *buf = (char*) malloc (totlen);
+		char *p = buf;
+
+		for(j = 0; j< numrows; j++)
+		{
+			memcpy(p, row[j].chars, row[j].size);
+			p += row[j].size;
+			*p = '\n';
+			p++;
+		}
+
+		return buf;
+	}
+
+	void editorSave()
+	{
+		if(filename == NULL)
+			return;
+		
+		int len;
+		char *buf = editorRowsToString(&len);
+
+		int fd = open(filename, O_RDWR | O_CREAT, 0644);
+		ftruncate(fd, len);
+		write(fd, buf, len);
+		close(fd);
+		free(buf);
+	}	
+
+	//-------------------------------------------------------------------------------------------
 		
 };
 
