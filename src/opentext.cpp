@@ -12,17 +12,18 @@ using namespace std;
 /** init **/
 int main(int argc,char *argv[])
 {
-	// Entering raw mode:
-	// Disbled echo and cannonical mode
-	enterRawMode();
 	if (argc>=2)
 	{
-		editorConfig ECONFIG(argv[1]);
+		ECONFIG = editorConfig(argv[1]);
 	}
 	else
 	{
-		editorConfig ECONFIG();
+		ECONFIG = editorConfig();
 	}
+
+	// Entering raw mode:
+	// Disbled echo and cannonical mode
+	enterRawMode();
 
 	// Input while loop
 	while(1)

@@ -45,8 +45,7 @@ public:
 		ssize_t linelen;
 		linelen = getline(&line, &linecap, fp);
 		if (linelen != -1) {
-			while (linelen > 0 && (line[linelen - 1] == '\n' ||
-								line[linelen - 1] == '\r'))
+			while (linelen > 0 && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r'))
 			linelen--;
 			row.size = linelen;
 			row.chars = (char*)malloc(linelen + 1);
@@ -61,7 +60,7 @@ public:
 		
 };
 
-//editorConfig ECONFIG;
+editorConfig ECONFIG;
 
 struct abuf
 {

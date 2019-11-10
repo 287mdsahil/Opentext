@@ -8,28 +8,31 @@ void editorDrawRows(struct abuf *ab)
 	int i;
 	for(i=0;i<ECONFIG.screenrows;i++)
 	{
-		if(i>=ECONFIG.numrows){
-		if (i == ECONFIG.screenrows / 3) 
+		if(i>=ECONFIG.numrows)
 		{
-			//show welcome message
-      		char welcome[80];
-      		int welcomelen = snprintf(welcome, sizeof(welcome),
-    		"Opentext_ %s", VERSION);
-      		if (welcomelen > ECONFIG.screencols) welcomelen = ECONFIG.screencols;
-			//centering the messagex
-			int padding = (ECONFIG.screencols - welcomelen) / 2;
-			if (padding) {
-				abAppend(ab, "~", 1);
-				padding--;
-			}
-     		 while (padding--) abAppend(ab, " ", 1);
-     		 abAppend(ab, welcome, welcomelen);
-    	}
-		 else 
-		{
+			if (i == ECONFIG.screenrows / 3) 
+			{
+				//show welcome message
+      				char welcome[80];
+      				int welcomelen = snprintf(welcome, sizeof(welcome), "Opentext_ %s", VERSION);
+      				if (welcomelen > ECONFIG.screencols) welcomelen = ECONFIG.screencols;
+				//centering the messagex
+				int padding = (ECONFIG.screencols - welcomelen) / 2;
+				if (padding) 
+				{
+					abAppend(ab, "~", 1);
+					padding--;
+				}
+     				 while (padding--) abAppend(ab, " ", 1);
+     				 abAppend(ab, welcome, welcomelen);
+    			}
+			else 
+			{
 			abAppend(ab,"~",1);
-		}
-		} else {
+			}
+		} 
+		else 
+		{
 			int len = ECONFIG.row.size;
 			if (len > ECONFIG.screencols) len = ECONFIG.screencols;
 			abAppend(ab, ECONFIG.row.chars, len);
