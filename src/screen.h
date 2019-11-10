@@ -77,7 +77,7 @@ void editorRefreshScreen()
 
 	//move the cursor
 	char buf[32];
-  	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", ECONFIG.cy + 1, ECONFIG.cx + 1);
+  	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", ECONFIG.cy - ECONFIG.rowoff + 1, ECONFIG.cx + 1);
   	abAppend(&ab, buf, strlen(buf));
 
 	abAppend(&ab,"\x1b[?25h",6);
