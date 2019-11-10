@@ -10,7 +10,7 @@
 #include <stdarg.h>
 
 #define TAB_SIZE 8
-
+#define QUIT_TIMES 3
 using namespace std;
 
 typedef struct erow {

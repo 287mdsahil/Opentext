@@ -132,6 +132,7 @@ void editorMoveCursor(int key)
 // Function to process the key presses
 void editorProcessKeypress()
 {
+	static int quit_times = QUIT_TIMES;
 	int c = editorReadKey();
 
 	switch (c) 
@@ -142,6 +143,12 @@ void editorProcessKeypress()
 
 		case CTRL_KEY('q'):
 		       	// C^q to exit
+			if(ECONFIG.dirty && quit_times > 0)
+			{
+				ECONFIG.editorSetStatusMessage("Warning!!! File has unsaved changes. Press C^q %d more times to quit.", quit_times);
+				quit_times--;
+				return;
+			}
 			write(STDOUT_FILENO, "\x1b[2J", 4);
       			write(STDOUT_FILENO, "\x1b[H", 3);
 			exit(0);
@@ -200,4 +207,6 @@ void editorProcessKeypress()
 			ECONFIG.editorInsertChar(c);
 			break;
 	}
+
+	quit_times = QUIT_TIMES;
 }
