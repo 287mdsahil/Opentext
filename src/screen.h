@@ -5,6 +5,7 @@
 
 void editorScroll()
 {
+	//vertical scrolling
 	if(ECONFIG.cy < ECONFIG.rowoff)
 	{
 		ECONFIG.rowoff = ECONFIG.cy;
@@ -13,6 +14,17 @@ void editorScroll()
 	{
 		ECONFIG.rowoff = ECONFIG.cy - ECONFIG.screenrows + 1;
 	}
+
+	//horizontal scrolling
+	if(ECONFIG.cx < ECONFIG.coloff)
+	{
+		ECONFIG.coloff = ECONFIG.cx;
+	}
+	if(ECONFIG.cx > ECONFIG.coloff + ECONFIG.screencols)
+	{
+		ECONFIG.coloff = ECONFIG.cx - ECONFIG.screencols + 1;
+	}
+
 }
 
 void editorDrawRows(struct abuf *ab)
@@ -46,9 +58,10 @@ void editorDrawRows(struct abuf *ab)
 		} 
 		else 
 		{
-			int len = ECONFIG.row[filerow].size;
+			int len = ECONFIG.row[filerow].size - ECONFIG.coloff;
+			if(len < 0) len = 0;
 			if (len > ECONFIG.screencols) len = ECONFIG.screencols;
-			abAppend(ab, ECONFIG.row[filerow].chars, len);
+			abAppend(ab, ECONFIG.row[filerow].chars + ECONFIG.coloff, len);
 		}
 
 		abAppend(ab,"\x1b[K",3);
@@ -77,7 +90,7 @@ void editorRefreshScreen()
 
 	//move the cursor
 	char buf[32];
-  	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", ECONFIG.cy - ECONFIG.rowoff + 1, ECONFIG.cx + 1);
+  	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", ECONFIG.cy - ECONFIG.rowoff + 1, ECONFIG.cx - ECONFIG.coloff + 1);
   	abAppend(&ab, buf, strlen(buf));
 
 	abAppend(&ab,"\x1b[?25h",6);

@@ -77,25 +77,42 @@ int editorReadKey()
 	}
 }
 //method to move cursor using a,s,w,d
-void editorMoveCursor(int key) {
-  switch (key) {
-    case ARROW_LEFT:
-	  if(ECONFIG.cx!=0){
-      ECONFIG.cx--;}
-      break;
-    case ARROW_RIGHT:
-	  if(ECONFIG.cx!=ECONFIG.screencols-1){
-      ECONFIG.cx++;}
-      break;
-    case ARROW_UP:
-	  if(ECONFIG.cy!=0){
-      ECONFIG.cy--;}
-      break;
-    case ARROW_DOWN:
-	  if(ECONFIG.cy < ECONFIG.numrows){
-      ECONFIG.cy++;}
-      break;
-  }
+void editorMoveCursor(int key) 
+{
+	erow *row = (ECONFIG.cy >= ECONFIG.numrows) ? NULL : &ECONFIG.row[ECONFIG.cy];
+	
+  	switch (key) {
+    	case ARROW_LEFT:
+		  if(ECONFIG.cx!=0){
+	      ECONFIG.cx--;}
+	      break;
+	    case ARROW_RIGHT:
+	      if(row && ECONFIG.cx < row->size)
+	      {
+	      		ECONFIG.cx++;
+	      }
+	      break;
+	    case ARROW_UP:
+		  if(ECONFIG.cy!=0){
+	      ECONFIG.cy--;}
+	      break;
+	    case ARROW_DOWN:
+		  if(ECONFIG.cy < ECONFIG.numrows){
+	      ECONFIG.cy++;}
+	      break;
+  	}
+
+
+	// reposition cursor to end of current line if the cursor position exceed the line size
+	row = (ECONFIG.cy >= ECONFIG.numrows) ? NULL : &ECONFIG.row[ECONFIG.cy];
+	if(row == NULL)
+	{
+		ECONFIG.cy = 0;
+	}
+	else if( ECONFIG.cx > row->size)
+	{
+		ECONFIG.cx = row->size;
+	}
 }
 
 

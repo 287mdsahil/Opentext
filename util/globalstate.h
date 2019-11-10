@@ -18,6 +18,8 @@ public:
 	int cx,cy;
 	// row offset for scrolling
 	int rowoff;
+	// column offset for scrolling
+	int coloff;
 	int screenrows;
 	int screencols;
 	int numrows;
@@ -30,6 +32,7 @@ public:
 		cx=0;
 		cy=0;
 		rowoff = 0;
+		coloff = 0;
 		numrows=0;
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
 	}
@@ -38,6 +41,7 @@ public:
 		cx=0;
 		cy=0;
 		rowoff = 0;
+		coloff = 0;
 		numrows=0;
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
 		editorOpen(filename);
