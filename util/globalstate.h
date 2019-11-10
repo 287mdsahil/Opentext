@@ -16,6 +16,8 @@ class editorConfig
 {
 public:
 	int cx,cy;
+	// row offset for scrolling
+	int rowoff;
 	int screenrows;
 	int screencols;
 	int numrows;
@@ -27,6 +29,7 @@ public:
 	{
 		cx=0;
 		cy=0;
+		rowoff = 0;
 		numrows=0;
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
 	}
@@ -34,6 +37,7 @@ public:
 	{
 		cx=0;
 		cy=0;
+		rowoff = 0;
 		numrows=0;
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
 		editorOpen(filename);

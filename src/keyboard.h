@@ -92,7 +92,7 @@ void editorMoveCursor(int key) {
       ECONFIG.cy--;}
       break;
     case ARROW_DOWN:
-	  if(ECONFIG.cy!=ECONFIG.screenrows-1){
+	  if(ECONFIG.cy < ECONFIG.numrows){
       ECONFIG.cy++;}
       break;
   }

@@ -3,12 +3,25 @@
 #include "../include/globalstate"
 #define VERSION "0.0.1"
 
+void editorScroll()
+{
+	if(ECONFIG.cy < ECONFIG.rowoff)
+	{
+		ECONFIG.rowoff = ECONFIG.cy;
+	}
+	if(ECONFIG.cy > ECONFIG.rowoff + ECONFIG.screenrows)
+	{
+		ECONFIG.rowoff = ECONFIG.cy - ECONFIG.screenrows + 1;
+	}
+}
+
 void editorDrawRows(struct abuf *ab)
 {
 	int i;
 	for(i=0;i<ECONFIG.screenrows;i++)
 	{
-		if(i>=ECONFIG.numrows)
+		int filerow = i + ECONFIG.rowoff;
+		if(filerow >=ECONFIG.numrows)
 		{
 			if (ECONFIG.numrows == 0 && i == ECONFIG.screenrows / 3) 
 			{
@@ -33,9 +46,9 @@ void editorDrawRows(struct abuf *ab)
 		} 
 		else 
 		{
-			int len = ECONFIG.row[i].size;
+			int len = ECONFIG.row[filerow].size;
 			if (len > ECONFIG.screencols) len = ECONFIG.screencols;
-			abAppend(ab, ECONFIG.row[i].chars, len);
+			abAppend(ab, ECONFIG.row[filerow].chars, len);
 		}
 
 		abAppend(ab,"\x1b[K",3);
@@ -49,6 +62,9 @@ void editorDrawRows(struct abuf *ab)
 
 void editorRefreshScreen()
 {
+	//scrolling
+	editorScroll();
+
 	struct abuf ab = ABUF_INIT;
 	//Hide cursor when repainting
 	abAppend(&ab,"\x1b[?25l",6);
@@ -64,8 +80,6 @@ void editorRefreshScreen()
   	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", ECONFIG.cy + 1, ECONFIG.cx + 1);
   	abAppend(&ab, buf, strlen(buf));
 
-	// Place the curson to the top right corner
-	abAppend(&ab, "\x1b[H", 3);
 	abAppend(&ab,"\x1b[?25h",6);
 
 	write(STDOUT_FILENO,ab.b,ab.len);
