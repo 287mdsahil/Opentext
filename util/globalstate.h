@@ -4,7 +4,8 @@
 #include <string.h>
 #include <vector>
 #include <sys/types.h>
-#include<stdlib.h>
+#include <stdlib.h>
+#include <string>
 
 #define TAB_SIZE 8
 
@@ -111,7 +112,37 @@ public:
 
 		row.push_back(newrow);
 		numrows ++;	
-	}	
+	}
+
+
+	void editorRowInsertChar(erow *row, int at, int c)
+	{
+		if(at < 0 || at > row->size)
+			at = row->size;
+		row->chars = (char*) realloc(row->chars, row->size+2);
+		memmove(&row->chars[at + 1], &row->chars[at], row->size - at + 1);
+		row->size++;
+		row->chars[at] = c;
+		editorUpdateRow(row);
+	}
+
+
+	/** editor operation ------------------------------------------------------------------**/
+
+	void editorInsertChar(int c)
+	{
+		if(cy == numrows)
+		{
+			char s[80];
+			s[0] = '\0';
+			editorAppendRow(s,0);
+		}
+		editorRowInsertChar(&row[cy], cx, c);
+		cx++;
+	}
+
+	//----------------------------------------------------------------------------------------
+	
 
 	void editorOpen(char *fname) 
 	{

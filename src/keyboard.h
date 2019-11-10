@@ -7,6 +7,7 @@
 #define CTRL_KEY(k) ((k) & 0x1f)
 enum editorKey 
 {
+  BACKSPACE = 127,
   ARROW_LEFT = 1000,
   ARROW_RIGHT ,
   ARROW_UP ,
@@ -135,6 +136,10 @@ void editorProcessKeypress()
 
 	switch (c) 
 	{
+		case '\r':
+			//todo
+			break;
+
 		case CTRL_KEY('q'):
 		       	// C^q to exit
 			write(STDOUT_FILENO, "\x1b[2J", 4);
@@ -148,6 +153,13 @@ void editorProcessKeypress()
       			if(ECONFIG.cy < ECONFIG.numrows)
 				ECONFIG.cx = ECONFIG.row[ECONFIG.cy].size;
       			break;
+
+		case BACKSPACE:
+		case CTRL_KEY('h'):
+		case DEL_KEY:
+			//todo
+			break;
+
 		case PAGE_UP:
 		case PAGE_DOWN:
 		{
@@ -167,11 +179,20 @@ void editorProcessKeypress()
 			editorMoveCursor(c == PAGE_UP ? ARROW_UP : ARROW_DOWN);
 		}
 		break;
-		case ARROW_UP:
-    	case ARROW_DOWN:
+	
+	case ARROW_UP:
+	case ARROW_DOWN:
     	case ARROW_LEFT:
     	case ARROW_RIGHT:
 			editorMoveCursor(c);
+			break;
+	
+	case CTRL_KEY('l'):
+	case '\x1b':
+			break;
+
+	default:
+			ECONFIG.editorInsertChar(c);
 			break;
 	}
 }
