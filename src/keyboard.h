@@ -138,15 +138,16 @@ void editorProcessKeypress()
 		case CTRL_KEY('q'):
 		       	// C^q to exit
 			write(STDOUT_FILENO, "\x1b[2J", 4);
-      		write(STDOUT_FILENO, "\x1b[H", 3);
+      			write(STDOUT_FILENO, "\x1b[H", 3);
 			exit(0);
 			break;
 		case HOME_KEY:
-      		ECONFIG.cx = 0;
-      		break;
-    	case END_KEY:
-      		ECONFIG.cx = ECONFIG.screencols - 1;
-      		break;
+      			ECONFIG.cx = 0;
+      			break;
+    		case END_KEY:
+      			if(ECONFIG.cy < ECONFIG.numrows)
+				ECONFIG.cx = ECONFIG.row[ECONFIG.cy].size;
+      			break;
 		case PAGE_UP:
 		case PAGE_DOWN:
 		{
