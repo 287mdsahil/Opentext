@@ -130,6 +130,23 @@ public:
 	}
 
 
+	void editorInsertRow(int at, char *s, size_t len)
+	{
+		erow newrow;
+		newrow.size = len;
+		newrow.chars = (char*) malloc(len+1);
+		memcpy(newrow.chars, s, len);
+		newrow.chars[len] = '\0';
+		newrow.rsize = 0;
+		newrow.render = NULL;
+		editorUpdateRow(&newrow);
+
+		row.insert(row.begin() + at,newrow);
+		numrows ++;
+		dirty++;	
+	}
+
+
 	void editorRowInsertChar(erow *row, int at, int c)
 	{
 		if(at < 0 || at > row->size)
@@ -186,7 +203,7 @@ public:
 		{
 			char s[80];
 			s[0] = '\0';
-			editorAppendRow(s,0);
+			editorInsertRow(numrows,s,0);
 		}
 		editorRowInsertChar(&row[cy], cx, c);
 		cx++;
@@ -212,6 +229,26 @@ public:
 			editorDelRow(cy);
 			cy--;
 		}
+	}
+
+	void editorInsertNewline() {
+  		if (cx == 0) 
+		{
+			char s[2];
+			s[0] = '\0';
+    			editorInsertRow(cy, s, 0);
+  		} 
+		else 
+		{
+   		 	erow *nrow = &row[cy];
+    			editorInsertRow(cy + 1, &nrow->chars[cx], nrow->size - cx);
+    			nrow = &row[cy];
+    			nrow->size = cx;
+    			nrow->chars[nrow->size] = '\0';
+    			editorUpdateRow(nrow);
+  		}
+  		cy++;
+  		cx = 0;
 	}
 
 	//----------------------------------------------------------------------------------------

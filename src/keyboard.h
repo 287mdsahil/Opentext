@@ -138,7 +138,7 @@ void editorProcessKeypress()
 	switch (c) 
 	{
 		case '\r':
-			//todo
+			ECONFIG.editorInsertNewline();
 			break;
 
 		case CTRL_KEY('q'):
