@@ -10,7 +10,7 @@ void editorDrawRows(struct abuf *ab)
 	{
 		if(i>=ECONFIG.numrows)
 		{
-			if (i == ECONFIG.screenrows / 3) 
+			if (ECONFIG.numrows == 0 && i == ECONFIG.screenrows / 3) 
 			{
 				//show welcome message
       				char welcome[80];
