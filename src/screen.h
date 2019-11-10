@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <unistd.h>
 #include <iostream>
 #include "../include/globalstate"
@@ -29,6 +30,49 @@ void editorScroll()
 		ECONFIG.coloff = ECONFIG.rx - ECONFIG.screencols + 1;
 	}
 
+}
+
+
+
+void editorDrawMessageBar(struct abuf *ab) 
+{
+	abAppend(ab, "\x1b[K", 3);
+  	int msglen = strlen(ECONFIG.statusmsg);
+  	if (msglen > ECONFIG.screencols) msglen = ECONFIG.screencols;
+  	if (msglen && time(NULL) - ECONFIG.statusmsg_time < 5)
+    		abAppend(ab, ECONFIG.statusmsg, msglen);
+}
+
+
+// Draw status bar
+void editorDrawStatusBar(struct abuf *ab) 
+{
+ 	abAppend(ab, "\x1b[7m", 4);
+
+	char status[80],rstatus[80];
+  	int len = snprintf(status, sizeof(status), "%.20s - %d lines",
+			ECONFIG.filename ? ECONFIG.filename: "[ No Name ]", ECONFIG.numrows);
+	if(len > ECONFIG.screencols)
+		len = ECONFIG.screencols;
+	
+	int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d", ECONFIG.cy + 1, ECONFIG.numrows);
+	abAppend(ab, status, len);
+
+  	while (len < ECONFIG.screencols) 
+	{
+		if( ECONFIG.screencols - len == rlen)
+		{
+			abAppend(ab, rstatus, rlen);
+			break;
+		}
+		else
+		{
+    			abAppend(ab, " ", 1);
+    			len++;
+		}
+  	}
+  	abAppend(ab, "\x1b[m", 3);
+	abAppend(ab, "\r\n", 2);
 }
 
 void editorDrawRows(struct abuf *ab)
@@ -70,10 +114,7 @@ void editorDrawRows(struct abuf *ab)
 
 		abAppend(ab,"\x1b[K",3);
 		//modifying to print ~ in all rows
-		if(i<ECONFIG.screenrows - 1)
-		{
-			abAppend(ab,"\r\n",2);
-		}
+		abAppend(ab,"\r\n",2); 
 	}
 }
 
@@ -89,8 +130,12 @@ void editorRefreshScreen()
 	// Place the curson to the top right corner
 	abAppend(&ab,"\x1b[H", 3);
 
-	// Print tildes
+	// Print lines
 	editorDrawRows(&ab);
+	// Print status bar
+	editorDrawStatusBar(&ab);
+	// Print message bar
+	editorDrawMessageBar(&ab);
 
 	//move the cursor
 	char buf[32];
@@ -102,3 +147,13 @@ void editorRefreshScreen()
 	write(STDOUT_FILENO,ab.b,ab.len);
 	abFree(&ab);
 }
+
+void editorSetStatusMessage(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(ECONFIG.statusmsg, sizeof(ECONFIG.statusmsg), fmt, ap);
+	va_end(ap);
+	ECONFIG.statusmsg_time = time(NULL);
+}
+

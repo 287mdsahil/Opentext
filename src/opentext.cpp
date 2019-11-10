@@ -14,12 +14,14 @@
 #define _GNU_SOURCE
 #endif
 
+#include <stdarg.h>
 #include "../include/errorhandling"
 #include "../include/globalstate"
 #include "rawmode.h"
 #include "keyboard.h"
 #include "screen.h"
 using namespace std;
+
 
 /** init **/
 int main(int argc,char *argv[])
@@ -36,6 +38,8 @@ int main(int argc,char *argv[])
 	// Entering raw mode:
 	// Disbled echo and cannonical mode
 	enterRawMode();
+
+	editorSetStatusMessage("HELP: C^Q = quit");
 
 	// Input while loop
 	while(1)

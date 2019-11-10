@@ -30,10 +30,13 @@ public:
 	int screencols;
 	int numrows;
 	vector<erow> row;
+	char *filename;
+	char statusmsg[80];
+	time_t statusmsg_time;
 	struct termios original_termios;
 
 	// Constructor
-	editorConfig(char *filename = NULL)
+	editorConfig(char *fname = NULL)
 	{
 		cx=0;
 		rx=0;
@@ -41,9 +44,16 @@ public:
 		rowoff = 0;
 		coloff = 0;
 		numrows=0;
+		filename = NULL;
+		statusmsg[0] = '\0';
+		statusmsg_time = 0;
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
-		if(filename != NULL)
-			editorOpen(filename);
+		
+		// making room for status bar
+		screenrows -= 2;
+
+		if(fname != NULL)
+			editorOpen(fname);
 	}
 
 	/** row operations **/
@@ -103,9 +113,11 @@ public:
 		numrows ++;	
 	}	
 
-	void editorOpen(char *filename) 
+	void editorOpen(char *fname) 
 	{
-		FILE *fp = fopen(filename, "r");
+		free(filename);
+		filename = strdup(fname);
+		FILE *fp = fopen(fname, "r");
 		if (!fp) die("fopen");
 		char *line = NULL;
 		size_t linecap = 0;
