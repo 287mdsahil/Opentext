@@ -4,6 +4,8 @@
 #include "../include/globalstate"
 #define VERSION "0.0.1"
 
+int editorReadKey();
+
 void editorScroll()
 {
 	ECONFIG.rx = 0;
@@ -147,4 +149,47 @@ void editorRefreshScreen()
 
 	write(STDOUT_FILENO,ab.b,ab.len);
 	abFree(&ab);
+}
+
+
+char *editorPrompt(char *prompt)
+{
+  	size_t bufsize = 128;
+  	char *buf = (char*) malloc(bufsize);
+  	size_t buflen = 0;
+  	buf[0] = '\0';
+  	while (1) 
+	{
+    		ECONFIG.editorSetStatusMessage(prompt, buf);
+    		editorRefreshScreen();
+    		int c = editorReadKey();
+		if (c == DEL_KEY || c == CTRL_KEY('h') || c == BACKSPACE)
+		{
+      			if (buflen != 0) buf[--buflen] = '\0';
+    		}
+		else if (c == '\x1b')
+		{
+			ECONFIG.editorSetStatusMessage("");
+			free(buf);
+			return NULL;
+		}
+    		else if (c == '\r')
+		{
+      			if (buflen != 0)
+			{
+        		ECONFIG.editorSetStatusMessage("");
+        		return buf;
+      			}
+  	 	}
+		else if (!iscntrl(c) && c < 128)
+		{
+      			if (buflen == bufsize - 1)
+			{
+        			bufsize *= 2;
+        			buf = (char*) realloc(buf, bufsize);	
+			}
+      			buf[buflen++] = c;
+      			buf[buflen] = '\0';
+    		}
+  	}
 }

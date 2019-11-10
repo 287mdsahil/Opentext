@@ -11,7 +11,10 @@
 
 #define TAB_SIZE 8
 #define QUIT_TIMES 3
+
 using namespace std;
+
+char * editorPrompt(char*);
 
 typedef struct erow {
   int size;
@@ -70,6 +73,7 @@ public:
 		va_end(ap);
 		statusmsg_time = time(NULL);
 	}
+
 
 	/** row operations -----------------------------------------------------------------**/
 
@@ -306,7 +310,16 @@ public:
 	void editorSave()
 	{
 		if(filename == NULL)
-			return;
+		{
+			char prompt[80] = "Save as: %s (ESC to cancel)";
+			filename = editorPrompt(prompt);
+			if(filename == NULL)
+			{
+				char saveabortedPrompt[80] = "Save aborted";
+				editorSetStatusMessage(saveabortedPrompt);
+				return;
+			}
+		}
 		
 		int len;
 		char *buf = editorRowsToString(&len);
