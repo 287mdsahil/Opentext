@@ -50,8 +50,9 @@ void editorDrawStatusBar(struct abuf *ab)
  	abAppend(ab, "\x1b[7m", 4);
 
 	char status[80],rstatus[80];
-  	int len = snprintf(status, sizeof(status), "%.20s - %d lines",
-			ECONFIG.filename ? ECONFIG.filename: "[ No Name ]", ECONFIG.numrows);
+  	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s",
+			ECONFIG.filename ? ECONFIG.filename: "[ No Name ]", ECONFIG.numrows, 
+			ECONFIG.dirty? "(modified)" : "" );
 	if(len > ECONFIG.screencols)
 		len = ECONFIG.screencols;
 	
@@ -147,13 +148,3 @@ void editorRefreshScreen()
 	write(STDOUT_FILENO,ab.b,ab.len);
 	abFree(&ab);
 }
-
-void editorSetStatusMessage(const char *fmt, ...)
-{
-	va_list ap;
-	va_start(ap, fmt);
-	vsnprintf(ECONFIG.statusmsg, sizeof(ECONFIG.statusmsg), fmt, ap);
-	va_end(ap);
-	ECONFIG.statusmsg_time = time(NULL);
-}
-

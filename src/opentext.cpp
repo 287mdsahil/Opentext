@@ -39,7 +39,7 @@ int main(int argc,char *argv[])
 	// Disbled echo and cannonical mode
 	enterRawMode();
 
-	editorSetStatusMessage("HELP: C^Q = quit");
+	ECONFIG.editorSetStatusMessage("HELP: C^s = save | C^q = quit");
 
 	// Input while loop
 	while(1)

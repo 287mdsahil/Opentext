@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string>
 #include <fcntl.h>
+#include <stdarg.h>
 
 #define TAB_SIZE 8
 
@@ -35,6 +36,7 @@ public:
 	char *filename;
 	char statusmsg[80];
 	time_t statusmsg_time;
+	int dirty;
 	struct termios original_termios;
 
 	// Constructor
@@ -49,6 +51,7 @@ public:
 		filename = NULL;
 		statusmsg[0] = '\0';
 		statusmsg_time = 0;
+		dirty = 0;
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
 		
 		// making room for status bar
@@ -56,6 +59,16 @@ public:
 
 		if(fname != NULL)
 			editorOpen(fname);
+	}
+
+
+	void editorSetStatusMessage(const char *fmt, ...)
+	{
+		va_list ap;
+		va_start(ap, fmt);
+		vsnprintf(statusmsg, sizeof(statusmsg), fmt, ap);
+		va_end(ap);
+		statusmsg_time = time(NULL);
 	}
 
 	/** row operations **/
@@ -112,7 +125,8 @@ public:
 		editorUpdateRow(&newrow);
 
 		row.push_back(newrow);
-		numrows ++;	
+		numrows ++;
+		dirty++;	
 	}
 
 
@@ -125,6 +139,7 @@ public:
 		row->size++;
 		row->chars[at] = c;
 		editorUpdateRow(row);
+		dirty++;
 	}
 
 
@@ -165,6 +180,7 @@ public:
 		}
 		free(line);
 		fclose(fp);
+		dirty = 0;
 		
 	}
 
@@ -202,10 +218,23 @@ public:
 		char *buf = editorRowsToString(&len);
 
 		int fd = open(filename, O_RDWR | O_CREAT, 0644);
-		ftruncate(fd, len);
-		write(fd, buf, len);
-		close(fd);
+		if(fd != -1)
+		{
+			if(ftruncate(fd, len) != -1)
+			{
+				if(write(fd, buf, len) == len)
+				{
+					close(fd);
+					free(buf);
+					dirty = 0;
+					editorSetStatusMessage("%d bytes written to disk", len);
+					return;
+				}
+			}
+			close(fd);
+		}
 		free(buf);
+		editorSetStatusMessage("Can't save! I/O error: %s", strerror(errno));
 	}	
 
 	//-------------------------------------------------------------------------------------------
