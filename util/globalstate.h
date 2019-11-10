@@ -142,6 +142,16 @@ public:
 		dirty++;
 	}
 
+	void editorRowDelChar(erow *row, int at)
+	{
+		if(at < 0 || at >= row->size)
+			return;
+		memmove(&row->chars[at], &row->chars[at + 1], row->size - at);
+		row->size--;
+		editorUpdateRow(row);
+		dirty++;
+	}
+
 
 	/** editor operation ------------------------------------------------------------------**/
 
@@ -155,6 +165,18 @@ public:
 		}
 		editorRowInsertChar(&row[cy], cx, c);
 		cx++;
+	}
+
+	void editorDelChar()
+	{
+		if(cy == numrows)
+			return;
+		
+		if(cx>0)
+		{
+			editorRowDelChar(&row[cy],cx - 1);
+			cx--;
+		}
 	}
 
 	//----------------------------------------------------------------------------------------
