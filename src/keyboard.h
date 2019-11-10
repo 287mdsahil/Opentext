@@ -83,13 +83,25 @@ void editorMoveCursor(int key)
 	
   	switch (key) {
     	case ARROW_LEFT:
-		  if(ECONFIG.cx!=0){
-	      ECONFIG.cx--;}
-	      break;
+		if(ECONFIG.cx!=0)
+		{
+	      		ECONFIG.cx--;
+		}
+		else if(ECONFIG.cy > 0)
+		{
+			ECONFIG.cy--;
+			ECONFIG.cx = ECONFIG.row[ECONFIG.cy].size;
+		}
+	      	break;
 	    case ARROW_RIGHT:
 	      if(row && ECONFIG.cx < row->size)
 	      {
 	      		ECONFIG.cx++;
+	      }
+	      else if(ECONFIG.cy < ECONFIG.numrows)
+	      {
+		      ECONFIG.cy++;
+		      ECONFIG.cx = 0;
 	      }
 	      break;
 	    case ARROW_UP:

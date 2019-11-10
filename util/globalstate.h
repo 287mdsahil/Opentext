@@ -10,6 +10,8 @@ using namespace std;
 typedef struct erow {
   int size;
   char *chars;
+  char *render;
+  int rsize;
 } erow;
 
 class editorConfig
@@ -27,7 +29,7 @@ public:
 	struct termios original_termios;
 
 	// Constructor
-	editorConfig()
+	editorConfig(char *filename = NULL)
 	{
 		cx=0;
 		cy=0;
@@ -35,16 +37,8 @@ public:
 		coloff = 0;
 		numrows=0;
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
-	}
-	editorConfig(char *filename)
-	{
-		cx=0;
-		cy=0;
-		rowoff = 0;
-		coloff = 0;
-		numrows=0;
-		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
-		editorOpen(filename);
+		if(filename != NULL)
+			editorOpen(filename);
 	}
 
 	/** row operations **/
