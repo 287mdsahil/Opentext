@@ -33,9 +33,9 @@ void editorDrawRows(struct abuf *ab)
 		} 
 		else 
 		{
-			int len = ECONFIG.row.size;
+			int len = ECONFIG.row[i].size;
 			if (len > ECONFIG.screencols) len = ECONFIG.screencols;
-			abAppend(ab, ECONFIG.row.chars, len);
+			abAppend(ab, ECONFIG.row[i].chars, len);
 		}
 
 		abAppend(ab,"\x1b[K",3);

@@ -2,8 +2,10 @@
 #include "../include/getwindowsize"
 #include "../include/errorhandling"
 #include <string.h>
+#include <vector>
 #include <sys/types.h>
 #include<stdlib.h>
+using namespace std;
 
 typedef struct erow {
   int size;
@@ -17,7 +19,7 @@ public:
 	int screenrows;
 	int screencols;
 	int numrows;
-	erow row;
+	vector<erow> row;
 	struct termios original_termios;
 
 	// Constructor
@@ -36,6 +38,20 @@ public:
 		if( getwindowsize(&screenrows,&screencols) == -1) die("getwindowsize");
 		editorOpen(filename);
 	}
+
+	/** row operations **/
+
+	void editorAppendRow(char *s, size_t len)
+	{
+		erow newrow;
+		newrow.size = len;
+		newrow.chars = (char*) malloc(len+1);
+		memcpy(newrow.chars, s, len);
+		newrow.chars[len] = '\0';
+		row.push_back(newrow);
+		numrows ++;	
+	}	
+
 	void editorOpen(char *filename) 
 	{
 		FILE *fp = fopen(filename, "r");
@@ -43,15 +59,14 @@ public:
 		char *line = NULL;
 		size_t linecap = 0;
 		ssize_t linelen;
-		linelen = getline(&line, &linecap, fp);
-		if (linelen != -1) {
-			while (linelen > 0 && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r'))
-			linelen--;
-			row.size = linelen;
-			row.chars = (char*)malloc(linelen + 1);
-			memcpy(row.chars, line, linelen);
-			row.chars[linelen] = '\0';
-			numrows = 1;
+		while( (linelen = getline(&line, &linecap, fp)) != -1)
+		{
+			if (linelen != -1)
+			{
+				while (linelen > 0 && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r'))
+				linelen--;
+				editorAppendRow(line, linelen);
+			}
 		}
 		free(line);
 		fclose(fp);
