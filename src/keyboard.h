@@ -150,6 +150,17 @@ void editorProcessKeypress()
 		case PAGE_UP:
 		case PAGE_DOWN:
 		{
+			if(c==PAGE_UP)
+			{
+				ECONFIG.cy = ECONFIG.rowoff;
+			}
+			else if(c==PAGE_DOWN)
+			{
+				ECONFIG.cy = ECONFIG.rowoff + ECONFIG.screenrows - 1;
+				if (ECONFIG.cy > ECONFIG.numrows)
+					ECONFIG.cy = ECONFIG.numrows;
+			}
+
 			int times = ECONFIG.screenrows;
 			while (times--)
 			editorMoveCursor(c == PAGE_UP ? ARROW_UP : ARROW_DOWN);
