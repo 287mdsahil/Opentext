@@ -71,7 +71,7 @@ public:
 		statusmsg_time = time(NULL);
 	}
 
-	/** row operations **/
+	/** row operations -----------------------------------------------------------------**/
 
 	int editorRowCxtoRx(erow *row, int cx)
 	{
@@ -152,6 +152,31 @@ public:
 		dirty++;
 	}
 
+	void editorFreeRow(erow *row) 
+	{
+  		free(row->render);
+		free(row->chars);
+	}
+
+	void editorDelRow(int at) 
+	{
+  		if (at < 0 || at >= numrows) return;
+  		editorFreeRow(&row[at]);
+  		row.erase(row.begin() + at);
+  		numrows--;
+  		dirty++;
+	}
+
+	void editorRowAppendString(erow *row, char *s, size_t len)
+	{
+  		row->chars = (char*) realloc(row->chars, row->size + len + 1);
+  		memcpy(&row->chars[row->size], s, len);
+  		row->size += len;
+  		row->chars[row->size] = '\0';
+  		editorUpdateRow(row);
+  		dirty++;
+	}
+
 
 	/** editor operation ------------------------------------------------------------------**/
 
@@ -171,11 +196,21 @@ public:
 	{
 		if(cy == numrows)
 			return;
+
+		if(cx == 0 && cy == 0)
+			return;
 		
 		if(cx>0)
 		{
 			editorRowDelChar(&row[cy],cx - 1);
 			cx--;
+		}
+		else
+		{
+			cx = row[cy - 1].size;
+			editorRowAppendString(&row[cy-1], row[cy].chars, row[cy].size);
+			editorDelRow(cy);
+			cy--;
 		}
 	}
 
